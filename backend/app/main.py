@@ -6,7 +6,10 @@ from typing import List, Optional, Dict, Any
 import logging
 import os
 
-# Load environment variables first
+# Load YAML configuration
+from .core.yaml_config import config
+
+# Import settings after environment is configured
 from .core.config import settings
 
 # Configure logging
@@ -29,7 +32,7 @@ app = FastAPI(
 # CORS middleware configuration
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=settings.CORS_ORIGINS,
+    allow_origins=config["cors"]["origins"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],

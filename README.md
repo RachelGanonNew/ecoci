@@ -28,6 +28,58 @@ For detailed documentation about the MCP Server implementation, see [MCP_SERVER.
 
 ### Prerequisites
 
+### 🚦 Local Development with ngrok
+
+For local development with GitHub webhooks, you'll need to set up ngrok to expose your local server to the internet.
+
+#### Windows Setup:
+
+1. **Download ngrok**:
+   - Go to [ngrok.com/download](https://ngrok.com/download)
+   - Download the Windows version
+   - Unzip the downloaded file (right-click → Extract All)
+
+2. **Run ngrok**:
+   - Open File Explorer and navigate to the unzipped folder
+   - Hold `Shift` and right-click in the folder
+   - Select "Open PowerShell window here"
+   - Run: `./ngrok http 8000`
+   - **Keep this window open** - it needs to stay running
+
+3. **Alternative - Add to PATH**:
+   - Copy `ngrok.exe` to `C:\Windows\`
+   - Now you can run `ngrok http 8000` from any terminal
+
+4. **Update Environment Variables**:
+   Add these to your `.env` file:
+   ```bash
+   WEBHOOK_URL=https://your-ngrok-url.ngrok.io/api/webhooks/github
+   GITHUB_WEBHOOK_SECRET=your_webhook_secret
+   ```
+   Generate a secret with: `python -c "import secrets; print(secrets.token_hex(20))"`
+
+5. **Configure GitHub Webhook**:
+   - Go to your GitHub repository → `Settings` → `Webhooks` → `Add webhook`
+   - **Payload URL**: `https://your-ngrok-url.ngrok.io/api/webhooks/github`
+   - **Content type**: `application/json`
+   - **Secret**: The same as `GITHUB_WEBHOOK_SECRET`
+   - **Events**: Select "Let me select individual events" and choose:
+     - `Push`
+     - `Pull request`
+     - `Workflow run`
+
+#### Testing Your Setup:
+1. Start your FastAPI server:
+   ```bash
+   cd backend
+   uvicorn app.main:app --reload
+   ```
+2. Make a change to your repository
+3. Check the ngrok terminal for incoming requests
+4. Check your FastAPI server logs for processing
+
+> 💡 **Note**: Your ngrok URL will change each time you restart ngrok. Update the webhook URL in GitHub if needed.
+
 - Python 3.9+
 - Node.js 16+
 - Docker

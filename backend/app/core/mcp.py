@@ -9,6 +9,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from typing import Dict, Any, Optional, Callable, Awaitable
 
 from app.core.config import settings
+from app.core.yaml_config import config  # Import YAML config
 
 from app.services.mcp_server import MCPServer, mcp_server
 from app.services.mcp_tools import register_all_tools
@@ -23,10 +24,38 @@ def setup_mcp_server(app: FastAPI) -> None:
     Args:
         app: The FastAPI application instance
     """
+    if not config.get("mcp", {}).get("enabled", False):
+        logger.info("MCP server is disabled in configuration")
+        return
+        
     logger.info("Initializing MCP server...")
     
+    # Configure MCP server
+    max_concurrent = config.get("mcp", {}).get("max_concurrent_requests", 10)
+    development_mode = os.getenv("DEVELOPMENT_MODE", "False").lower() == "true"
+    
     # Initialize the MCP server
-    mcp_server.start()
+    mcp_server.start(
+        max_concurrent_requests=max_concurrent,
+        development_mode=development_mode
+    )
+    
+    if development_mode:
+        logger.info("Running in development mode - webhook endpoints are disabled")
+        # Add development-only endpoints
+        from fastapi import APIRouter
+        from app.services.github_service import GitHubService
+        
+        dev_router = APIRouter(prefix="/api/dev", tags=["Development"])
+        
+        @dev_router.post("/trigger-event")
+        async def trigger_event(payload: dict):
+            """Manually trigger an event (for development)"""
+            service = GitHubService()
+            await service.handle_webhook(payload)
+            return {"status": "event processed"}
+            
+        app.include_router(dev_router)
     
     # Register all tools
     try:

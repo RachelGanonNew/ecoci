@@ -1,0 +1,41 @@
+# Local Development Configuration
+
+# Core Settings
+secret_key: "dev-secret-key-change-me-in-production"
+debug: true
+environment: "development"
+
+# Database (SQLite for local dev)
+database:
+  url: "sqlite:///./ecoci.db"
+  echo: true  # Show SQL queries in logs
+
+# GitHub Integration (Required for MCP)
+github:
+  app_id: ""  # Your GitHub App ID
+  private_key: |-
+    -----BEGIN RSA PRIVATE KEY-----
+    # Your GitHub App Private Key here
+    -----END RSA PRIVATE KEY-----
+  webhook_secret: "your-github-webhook-secret"
+
+# MCP Settings
+mcp:
+  enabled: true
+  max_concurrent_requests: 10
+
+# Disable Slack
+slack:
+  enabled: false
+  bot_token: ""
+  signing_secret: ""
+
+# CORS (for local development)
+cors:
+  origins:
+    - "http://localhost:3000"
+    - "http://127.0.0.1:3000"
+
+# Disable rate limiting for development
+rate_limit:
+  enabled: false

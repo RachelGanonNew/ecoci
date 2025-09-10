@@ -1,0 +1,23 @@
+# Minimal configuration for local development
+# Copy this to config.yaml and adjust as needed
+
+# Core settings
+secret_key: "your-secret-key-here"
+database_url: "sqlite:///./ecoci.db"
+environment: "development"
+
+# Optional settings (uncomment and set as needed)
+# github:
+#   app_id: "your-github-app-id"
+#   private_key: "your-github-private-key"
+#   webhook_secret: "your-github-webhook-secret"
+
+# slack:
+#   bot_token: "your-slack-bot-token"
+#   signing_secret: "your-slack-signing-secret"
+
+# Enable/disable features
+features:
+  enable_github: false
+  enable_slack: false
+  enable_analytics: false

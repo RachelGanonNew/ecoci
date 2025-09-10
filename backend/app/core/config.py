@@ -4,9 +4,17 @@ Application Configuration
 This module contains all the configuration settings for the EcoCI application.
 """
 import os
+import yaml
 from typing import List, Optional, Dict, Any, Union
-from pydantic import AnyHttpUrl, validator, HttpUrl, PostgresDsn
+from pydantic import AnyHttpUrl, validator, HttpUrl, PostgresDsn, Field
 from pydantic_settings import BaseSettings
+
+# Try to load config from YAML if it exists
+config_path = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(__file__))), 'config.yaml')
+config = {}
+if os.path.exists(config_path):
+    with open(config_path, 'r') as f:
+        config = yaml.safe_load(f) or {}
 
 class Settings(BaseSettings):
     # Application settings
