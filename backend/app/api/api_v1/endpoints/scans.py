@@ -3,9 +3,10 @@ from fastapi import APIRouter, Depends, HTTPException, status, Query, Path
 from sqlalchemy.orm import Session
 
 from .... import crud, models, schemas
-from ....db.session import get_db
+from ....database import get_db, get_db_session
 from ....core.security import get_current_active_user
 from ....services.github_service import GitHubService
+from ....schemas.repository import FindingStatus, FindingSeverity, FindingType
 
 router = APIRouter()
 
@@ -110,13 +111,14 @@ def delete_scan(
     return scan
 
 @router.get("/{scan_id}/findings", response_model=List[schemas.Finding])
-def list_scan_findings(
+@router.get("/{scan_id}/findings", response_model=List[schemas.Finding])
+async def list_scan_findings(
     *,
     db: Session = Depends(get_db),
     scan_id: int,
-    status: Optional[schemas.FindingStatus] = None,
-    severity: Optional[schemas.FindingSeverity] = None,
-    finding_type: Optional[schemas.FindingType] = None,
+    status: Optional[FindingStatus] = None,
+    severity: Optional[FindingSeverity] = None,
+    finding_type: Optional[FindingType] = None,
     skip: int = 0,
     limit: int = 100,
     current_user: models.User = Depends(get_current_active_user),

@@ -8,9 +8,11 @@ from fastapi import FastAPI, Request, HTTPException, status
 from fastapi.middleware.cors import CORSMiddleware
 from typing import Dict, Any, Optional, Callable, Awaitable
 
-from ..services.mcp_server import MCPServer, mcp_server
-from ..services.mcp_tools import register_all_tools
-from .mcp_security import MCPAuthMiddleware, require_auth
+from app.core.config import settings
+
+from app.services.mcp_server import MCPServer, mcp_server
+from app.services.mcp_tools import register_all_tools
+from app.core.mcp_security import MCPAuthMiddleware, require_auth
 
 logger = logging.getLogger(__name__)
 

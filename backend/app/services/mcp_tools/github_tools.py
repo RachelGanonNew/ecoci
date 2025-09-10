@@ -13,9 +13,9 @@ from github.Repository import Repository
 from github.WorkflowRun import WorkflowRun
 from github.PaginatedList import PaginatedList
 
-from ....core.config import settings
-from ....services.mcp_server import ToolDefinition
-from ....schemas.mcp import ToolParameterSchema
+from app.core.config import settings
+from app.services.mcp_server import ToolDefinition
+from app.schemas.mcp import ToolParameterSchema, ToolParameterType
 
 logger = logging.getLogger(__name__)
 

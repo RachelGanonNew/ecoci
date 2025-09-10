@@ -10,6 +10,7 @@ import logging
 import json
 
 from ....services.mcp_server import mcp_server, ToolDefinition, RegisteredAgent, ToolExecutionResult
+from ....database import get_db, get_db_session
 from ....core.security import get_current_user, verify_api_key
 from ....models.user import User
 from ....schemas.mcp import (
@@ -241,18 +242,4 @@ async def health_check() -> Dict[str, str]:
     """
     return {"status": "healthy"}
 
-# Add error handlers
-@router.exception_handler(HTTPException)
-async def http_exception_handler(request: Request, exc: HTTPException) -> JSONResponse:
-    return JSONResponse(
-        status_code=exc.status_code,
-        content={"detail": exc.detail}
-    )
-
-@router.exception_handler(Exception)
-async def global_exception_handler(request: Request, exc: Exception) -> JSONResponse:
-    logger.error(f"Unhandled exception: {str(exc)}", exc_info=True)
-    return JSONResponse(
-        status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-        content={"detail": "Internal server error"}
-    )
+# Error handlers are now registered in the main FastAPI app

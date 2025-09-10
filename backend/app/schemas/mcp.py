@@ -35,7 +35,7 @@ class ToolParameterSchema(BaseModel):
 
 class ToolRegistrationRequest(BaseModel):
     """Request model for registering a new tool."""
-    name: str = Field(..., min_length=1, max_length=100, regex=r'^[a-zA-Z0-9_-]+$')
+    name: str = Field(..., min_length=1, max_length=100, pattern=r'^[a-zA-Z0-9_-]+$')
     description: str = Field(..., min_length=1, max_length=1000)
     parameters: Dict[str, ToolParameterSchema]
     required: Optional[List[str]] = None
@@ -50,7 +50,7 @@ class ToolRegistrationRequest(BaseModel):
 
 class AgentRegistrationRequest(BaseModel):
     """Request model for registering a new agent."""
-    agent_id: str = Field(..., min_length=1, max_length=100, regex=r'^[a-zA-Z0-9_-]+$')
+    agent_id: str = Field(..., min_length=1, max_length=100, pattern=r'^[a-zA-Z0-9_-]+$')
     capabilities: List[str] = Field(..., min_items=1)
     metadata: Optional[Dict[str, Any]] = None
 

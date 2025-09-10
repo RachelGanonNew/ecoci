@@ -11,9 +11,9 @@ from pydantic import BaseModel, ValidationError
 import time
 import logging
 
-from ...core.config import settings
-from ...models.user import User
-from ...schemas.token import TokenPayload
+from app.core.config import settings
+from app.models.user import User
+from app.schemas.token import TokenPayload
 
 logger = logging.getLogger(__name__)
 

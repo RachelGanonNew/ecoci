@@ -3,24 +3,30 @@ from fastapi import APIRouter, Depends, HTTPException, status, Query, Path
 from sqlalchemy.orm import Session
 
 from .... import crud, models, schemas
-from ....db.session import get_db
+from ....database import get_db, get_db_session
 from ....core.security import get_current_active_user
 from ....services.github_service import GitHubService
+from ....schemas.recommendation import (
+    Recommendation, RecommendationStatus, RecommendationImpact, RecommendationEffort, 
+    RecommendationType, RecommendationWithRelated, RecommendationComment,
+    RecommendationCommentCreate, RecommendationCommentUpdate, RecommendationCommentInDBBase as RecommendationCommentInDB,
+    RecommendationTimelineEvent
+)
 
 router = APIRouter()
 
-@router.get("/", response_model=List[schemas.RecommendationWithRelated])
-def list_recommendations(
+@router.get("/", response_model=List[RecommendationWithRelated])
+async def list_recommendations(
     db: Session = Depends(get_db),
     skip: int = 0,
     limit: int = 100,
     repository_id: Optional[int] = None,
     scan_id: Optional[int] = None,
     finding_id: Optional[int] = None,
-    status: Optional[schemas.RecommendationStatus] = None,
-    impact: Optional[schemas.RecommendationImpact] = None,
-    effort: Optional[schemas.RecommendationEffort] = None,
-    recommendation_type: Optional[schemas.RecommendationType] = None,
+    status: Optional[RecommendationStatus] = None,
+    impact: Optional[RecommendationImpact] = None,
+    effort: Optional[RecommendationEffort] = None,
+    recommendation_type: Optional[RecommendationType] = None,
     current_user: models.User = Depends(get_current_active_user),
 ) -> Any:
     """
@@ -88,7 +94,7 @@ def list_recommendations(
     
     return recommendations
 
-@router.get("/{recommendation_id}", response_model=schemas.RecommendationWithRelated)
+@router.get("/{recommendation_id}", response_model=RecommendationWithRelated)
 def read_recommendation(
     *,
     db: Session = Depends(get_db),
@@ -114,7 +120,7 @@ def read_recommendation(
     
     return recommendation
 
-@router.patch("/{recommendation_id}", response_model=schemas.Recommendation)
+@router.put("/{recommendation_id}", response_model=schemas.Recommendation)
 def update_recommendation(
     *,
     db: Session = Depends(get_db),
@@ -184,7 +190,7 @@ def delete_recommendation(
     recommendation = crud.recommendation.remove(db, id=recommendation_id)
     return recommendation
 
-@router.post("/{recommendation_id}/implement", response_model=schemas.Recommendation)
+@router.post("/{recommendation_id}/pull-request", response_model=Recommendation)
 def implement_recommendation(
     *,
     db: Session = Depends(get_db),
@@ -213,7 +219,7 @@ def implement_recommendation(
     recommendation = crud.recommendation.update(
         db,
         db_obj=recommendation,
-        obj_in={"status": schemas.RecommendationStatus.IMPLEMENTED}
+        obj_in={"status": RecommendationStatus.IMPLEMENTED}
     )
     
     # Update the related finding status to RESOLVED if this recommendation fixes it
@@ -304,7 +310,7 @@ def create_pull_request_for_recommendation(
             db,
             db_obj=recommendation,
             obj_in={
-                "status": schemas.RecommendationStatus.APPROVED,
+                "status": RecommendationStatus.APPROVED,
                 "pr_url": pr_url
             }
         )
@@ -321,7 +327,7 @@ def create_pull_request_for_recommendation(
             detail=f"Failed to create pull request: {str(e)}",
         )
 
-@router.get("/{recommendation_id}/timeline", response_model=List[dict])
+@router.get("/{recommendation_id}/timeline", response_model=List[RecommendationTimelineEvent])
 def get_recommendation_timeline(
     *,
     db: Session = Depends(get_db),
@@ -381,7 +387,7 @@ def get_recommendation_timeline(
     
     return timeline
 
-@router.get("/{recommendation_id}/comments", response_model=List[schemas.RecommendationComment])
+@router.get("/{recommendation_id}/comments", response_model=List[RecommendationComment])
 def get_recommendation_comments(
     *,
     db: Session = Depends(get_db),
@@ -410,15 +416,14 @@ def get_recommendation_comments(
     comments = crud.recommendation_comment.get_multi_by_recommendation(
         db, recommendation_id=recommendation_id
     )
-    
     return comments
 
-@router.post("/{recommendation_id}/comments", response_model=schemas.RecommendationComment, status_code=status.HTTP_201_CREATED)
-def create_recommendation_comment(
+@router.post("/{recommendation_id}/comments", response_model=RecommendationComment, status_code=status.HTTP_201_CREATED)
+async def create_recommendation_comment(
     *,
     db: Session = Depends(get_db),
     recommendation_id: int,
-    comment_in: schemas.RecommendationCommentCreate,
+    comment_in: RecommendationCommentCreate,
     current_user: models.User = Depends(get_current_active_user),
 ) -> Any:
     """

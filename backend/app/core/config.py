@@ -5,7 +5,8 @@ This module contains all the configuration settings for the EcoCI application.
 """
 import os
 from typing import List, Optional, Dict, Any, Union
-from pydantic import AnyHttpUrl, BaseSettings, validator, HttpUrl, PostgresDsn
+from pydantic import AnyHttpUrl, validator, HttpUrl, PostgresDsn
+from pydantic_settings import BaseSettings
 
 class Settings(BaseSettings):
     # Application settings
@@ -27,19 +28,21 @@ class Settings(BaseSettings):
     POSTGRES_USER: str = os.getenv("POSTGRES_USER", "postgres")
     POSTGRES_PASSWORD: str = os.getenv("POSTGRES_PASSWORD", "")
     POSTGRES_DB: str = os.getenv("POSTGRES_DB", "ecoci")
-    DATABASE_URL: Optional[PostgresDsn] = None
+    DATABASE_URL: Optional[str] = None
     
     @validator("DATABASE_URL", pre=True)
     def assemble_db_connection(cls, v: Optional[str], values: Dict[str, Any]) -> Any:
         if isinstance(v, str):
             return v
-        return PostgresDsn.build(
-            scheme="postgresql",
-            user=values.get("POSTGRES_USER"),
-            password=values.get("POSTGRES_PASSWORD"),
-            host=values.get("POSTGRES_SERVER"),
-            path=f"/{values.get('POSTGRES_DB') or ''}",
-        )
+        
+        user = values.get("POSTGRES_USER")
+        password = values.get("POSTGRES_PASSWORD")
+        host = values.get("POSTGRES_SERVER")
+        db = values.get("POSTGRES_DB")
+        
+        # Construct the DSN string directly
+        auth_part = f"{user}:{password}@" if user and password else ""
+        return f"postgresql://{auth_part}{host}/{db}"
     
     # GitHub App settings
     GITHUB_APP_ID: str = os.getenv("GITHUB_APP_ID", "")
@@ -66,12 +69,19 @@ class Settings(BaseSettings):
     # Feature flags
     ENABLE_ANALYTICS: bool = os.getenv("ENABLE_ANALYTICS", "False").lower() in ("true", "1", "t")
     
+    # SQLAlchemy specific
+    SQLALCHEMY_DATABASE_URI: Optional[str] = None
+    
     class Config:
         case_sensitive = True
         env_file = ".env"
 
 # Create settings instance
 settings = Settings()
+
+# Set SQLAlchemy database URI if not already set
+if not settings.SQLALCHEMY_DATABASE_URI:
+    settings.SQLALCHEMY_DATABASE_URI = settings.DATABASE_URL or "sqlite:///./ecoci.db"
 
 # Configure logging
 import logging

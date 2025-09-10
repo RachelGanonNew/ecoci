@@ -26,18 +26,22 @@ SessionLocal = scoped_session(
 Base = declarative_base()
 
 def init_db():
-    ""
+    """
     Initialize the database by creating all tables.
     This should be called when the application starts.
     """
     # Import all models here to ensure they are registered with SQLAlchemy
-    from .models import user, repository  # noqa
+    from .models import Base  # This imports all models through __init__.py
     
+    # Create all tables
     Base.metadata.create_all(bind=engine)
+    
+    # Log the tables that were created
+    print("Initialized database with tables:", list(Base.metadata.tables.keys()))
 
 @contextmanager
 def get_db():
-    ""
+    """
     Dependency for getting a database session.
     Use this in FastAPI path operations to get a database session.
     
@@ -52,7 +56,7 @@ def get_db():
         db.close()
 
 def get_db_session():
-    ""
+    """
     Get a database session directly (for use outside of FastAPI).
     Remember to close the session when done.
     """

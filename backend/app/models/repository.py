@@ -1,4 +1,4 @@
-from sqlalchemy import Column, String, Integer, ForeignKey, Enum, JSON, Float, Boolean
+from sqlalchemy import Column, String, Integer, ForeignKey, Enum, JSON, Float, Boolean, DateTime, Text
 from sqlalchemy.orm import relationship
 from .base import Base, TimestampMixin
 import enum
@@ -28,6 +28,8 @@ class Repository(Base, TimestampMixin):
     owner = relationship("User", back_populates="repositories")
     scans = relationship("RepositoryScan", back_populates="repository")
     integrations = relationship("RepositoryIntegration", back_populates="repository")
+    findings = relationship("Finding", back_populates="repository")
+    recommendations = relationship("Recommendation", back_populates="repository")
 
 class RepositoryIntegration(Base, TimestampMixin):
     """Integration details for repositories."""

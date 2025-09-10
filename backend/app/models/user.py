@@ -1,4 +1,4 @@
-from sqlalchemy import Column, String, Boolean, ForeignKey, JSON
+from sqlalchemy import Column, String, Boolean, ForeignKey, JSON, Integer
 from sqlalchemy.orm import relationship
 from .base import Base, TimestampMixin
 
@@ -8,6 +8,7 @@ class User(Base, TimestampMixin):
     
     email = Column(String(255), unique=True, index=True, nullable=False)
     hashed_password = Column(String(255), nullable=False)
+    api_key = Column(String(64), unique=True, index=True, nullable=True)
     full_name = Column(String(255))
     is_active = Column(Boolean, default=True)
     is_superuser = Column(Boolean, default=False)
@@ -15,6 +16,8 @@ class User(Base, TimestampMixin):
     # Relationships
     repositories = relationship("Repository", back_populates="owner")
     slack_integration = relationship("SlackIntegration", back_populates="user", uselist=False)
+    findings = relationship("Finding", back_populates="reported_by")
+    recommendations = relationship("Recommendation", back_populates="created_by")
 
 class SlackIntegration(Base, TimestampMixin):
     """Slack integration details for users."""

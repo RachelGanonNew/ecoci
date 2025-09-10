@@ -3,21 +3,22 @@ from fastapi import APIRouter, Depends, HTTPException, status, Query, Path
 from sqlalchemy.orm import Session
 
 from .... import crud, models, schemas
-from ....db.session import get_db
+from ....database import get_db, get_db_session
 from ....core.security import get_current_active_user
+from ....schemas.repository import FindingStatus, FindingSeverity, FindingType
 
 router = APIRouter()
 
 @router.get("/", response_model=List[schemas.Finding])
-def list_findings(
+async def list_findings(
     db: Session = Depends(get_db),
     skip: int = 0,
     limit: int = 100,
     repository_id: Optional[int] = None,
     scan_id: Optional[int] = None,
-    status: Optional[schemas.FindingStatus] = None,
-    severity: Optional[schemas.FindingSeverity] = None,
-    finding_type: Optional[schemas.FindingType] = None,
+    status: Optional[FindingStatus] = None,
+    severity: Optional[FindingSeverity] = None,
+    finding_type: Optional[FindingType] = None,
     current_user: models.User = Depends(get_current_active_user),
 ) -> Any:
     """

@@ -3,7 +3,7 @@ from fastapi import APIRouter, Depends, HTTPException, status, Query, Path
 from sqlalchemy.orm import Session
 
 from .... import crud, models, schemas
-from ....db.session import get_db
+from ....database import get_db, get_db_session
 from ....core.security import get_current_active_user
 
 router = APIRouter()

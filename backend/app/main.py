@@ -1,6 +1,7 @@
 from fastapi import FastAPI, Depends, HTTPException, status, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.security import OAuth2PasswordBearer
+from fastapi.responses import JSONResponse
 from typing import List, Optional, Dict, Any
 import logging
 import os
@@ -65,7 +66,7 @@ async def health_check():
     }
 
 # Import and include API routers
-from .api.api_v1.api import api_router
+from app.api.api_v1 import api_router
 app.include_router(api_router, prefix=settings.API_V1_STR)
 
 # Error handlers

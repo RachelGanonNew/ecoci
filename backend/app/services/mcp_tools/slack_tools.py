@@ -15,8 +15,8 @@ import httpx
 from fastapi import HTTPException, status
 from pydantic import BaseModel, HttpUrl
 
-from ....core.config import settings
-from ....services.mcp_server import ToolDefinition
+from app.core.config import settings
+from app.services.mcp_server import ToolDefinition
 
 logger = logging.getLogger(__name__)
 

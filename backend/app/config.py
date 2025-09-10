@@ -1,4 +1,5 @@
-from pydantic import BaseSettings, HttpUrl, PostgresDsn, validator
+from pydantic import HttpUrl, PostgresDsn, validator
+from pydantic_settings import BaseSettings
 from typing import Optional, Dict, Any, List
 import os
 from dotenv import load_dotenv

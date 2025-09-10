@@ -6,9 +6,10 @@ This package contains all the tools that can be registered with the MCP server.
 import logging
 from typing import Dict, Any, Callable, Awaitable, Optional
 
-from ....services.mcp_server import MCPServer
-from .github_tools import register_github_tools
-from .slack_tools import register_slack_tools
+# Update import to use absolute path
+from app.services.mcp_server import MCPServer
+from app.services.mcp_tools.github_tools import register_github_tools
+from app.services.mcp_tools.slack_tools import register_slack_tools
 
 logger = logging.getLogger(__name__)
 
