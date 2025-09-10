@@ -4,6 +4,7 @@ MCP Server Initialization and Configuration
 This module initializes and configures the MCP server with all necessary tools and middleware.
 """
 import logging
+import os
 from fastapi import FastAPI, Request, HTTPException, status
 from fastapi.middleware.cors import CORSMiddleware
 from typing import Dict, Any, Optional, Callable, Awaitable
@@ -35,10 +36,7 @@ def setup_mcp_server(app: FastAPI) -> None:
     development_mode = os.getenv("DEVELOPMENT_MODE", "False").lower() == "true"
     
     # Initialize the MCP server
-    mcp_server.start(
-        max_concurrent_requests=max_concurrent,
-        development_mode=development_mode
-    )
+    mcp_server.start()
     
     if development_mode:
         logger.info("Running in development mode - webhook endpoints are disabled")

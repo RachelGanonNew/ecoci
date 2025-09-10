@@ -1,19 +1,17 @@
-# Import all models here to make them available when importing from app.models
-from .base import Base, TimestampMixin
+from .base import Base, BaseMixin
+
+# Import all models here to ensure they are registered with SQLAlchemy
 from .user import User, SlackIntegration
-from .repository import (
-    Repository, RepositoryProvider, RepositoryIntegration,
-    RepositoryScan, ScanFinding, ScanFindingType, ScanFindingSeverity
-)
-from .finding import Finding
+from .repository import Repository, RepositoryProvider, RepositoryIntegration, RepositoryScan, ScanFinding, ScanFindingType, ScanFindingSeverity
+from .finding import Finding, FindingSeverity, FindingStatus
 from .recommendation import Recommendation, RecommendationStatus, RecommendationType
 
 # Make models available for direct import
 __all__ = [
-    'Base', 'TimestampMixin',
+    'Base', 'BaseMixin',
     'User', 'SlackIntegration',
     'Repository', 'RepositoryProvider', 'RepositoryIntegration',
     'RepositoryScan', 'ScanFinding', 'ScanFindingType', 'ScanFindingSeverity',
-    'Finding',
+    'Finding', 'FindingSeverity', 'FindingStatus',
     'Recommendation', 'RecommendationStatus', 'RecommendationType'
 ]

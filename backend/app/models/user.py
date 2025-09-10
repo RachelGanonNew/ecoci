@@ -1,8 +1,8 @@
 from sqlalchemy import Column, String, Boolean, ForeignKey, JSON, Integer
 from sqlalchemy.orm import relationship
-from .base import Base, TimestampMixin
+from .base import Base, BaseMixin
 
-class User(Base, TimestampMixin):
+class User(Base, BaseMixin):
     """User model representing application users."""
     __tablename__ = "users"
     
@@ -19,7 +19,7 @@ class User(Base, TimestampMixin):
     findings = relationship("Finding", back_populates="reported_by")
     recommendations = relationship("Recommendation", back_populates="created_by")
 
-class SlackIntegration(Base, TimestampMixin):
+class SlackIntegration(Base, BaseMixin):
     """Slack integration details for users."""
     __tablename__ = "slack_integrations"
     

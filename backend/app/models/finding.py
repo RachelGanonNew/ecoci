@@ -4,7 +4,7 @@ Finding model for storing security and quality findings.
 import enum
 from sqlalchemy import Column, String, Integer, ForeignKey, Enum, Text, DateTime, Boolean
 from sqlalchemy.orm import relationship
-from .base import Base, TimestampMixin
+from .base import Base, BaseMixin
 
 class FindingSeverity(enum.Enum):
     """Severity levels for findings."""
@@ -22,7 +22,7 @@ class FindingStatus(enum.Enum):
     WONT_FIX = "wont_fix"
     FALSE_POSITIVE = "false_positive"
 
-class Finding(Base, TimestampMixin):
+class Finding(Base, BaseMixin):
     """Base finding model for storing various types of findings."""
     __tablename__ = "findings"
     

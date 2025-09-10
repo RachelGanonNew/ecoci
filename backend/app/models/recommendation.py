@@ -4,7 +4,7 @@ Recommendation model for storing optimization recommendations.
 import enum
 from sqlalchemy import Column, String, Integer, ForeignKey, Enum, Text, DateTime, Float, Boolean
 from sqlalchemy.orm import relationship
-from .base import Base, TimestampMixin
+from .base import Base, BaseMixin
 
 class RecommendationStatus(enum.Enum):
     """Status of a recommendation."""
@@ -25,7 +25,7 @@ class RecommendationType(enum.Enum):
     COST_SAVING = "cost_saving"
     OTHER = "other"
 
-class Recommendation(Base, TimestampMixin):
+class Recommendation(Base, BaseMixin):
     """Model for storing optimization recommendations."""
     __tablename__ = "recommendations"
     

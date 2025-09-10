@@ -1,6 +1,6 @@
 from sqlalchemy import Column, String, Integer, ForeignKey, Enum, JSON, Float, Boolean, DateTime, Text
 from sqlalchemy.orm import relationship
-from .base import Base, TimestampMixin
+from .base import Base, BaseMixin
 import enum
 
 class RepositoryProvider(enum.Enum):
@@ -8,7 +8,7 @@ class RepositoryProvider(enum.Enum):
     GITLAB = "gitlab"
     BITBUCKET = "bitbucket"
 
-class Repository(Base, TimestampMixin):
+class Repository(Base, BaseMixin):
     """Repository model representing source code repositories."""
     __tablename__ = "repositories"
     
@@ -31,7 +31,7 @@ class Repository(Base, TimestampMixin):
     findings = relationship("Finding", back_populates="repository")
     recommendations = relationship("Recommendation", back_populates="repository")
 
-class RepositoryIntegration(Base, TimestampMixin):
+class RepositoryIntegration(Base, BaseMixin):
     """Integration details for repositories."""
     __tablename__ = "repository_integrations"
     
@@ -46,7 +46,7 @@ class RepositoryIntegration(Base, TimestampMixin):
     # Relationships
     repository = relationship("Repository", back_populates="integrations")
 
-class RepositoryScan(Base, TimestampMixin):
+class RepositoryScan(Base, BaseMixin):
     """Model representing a scan of a repository for optimizations."""
     __tablename__ = "repository_scans"
     
@@ -79,7 +79,7 @@ class ScanFindingSeverity(enum.Enum):
     HIGH = "high"
     CRITICAL = "critical"
 
-class ScanFinding(Base, TimestampMixin):
+class ScanFinding(Base, BaseMixin):
     """Individual findings from a repository scan."""
     __tablename__ = "scan_findings"
     
