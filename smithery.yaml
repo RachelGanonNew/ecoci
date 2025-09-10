@@ -1,0 +1,9 @@
+build:
+  dockerfile: ./Dockerfile
+  context: .
+  environment:
+    - PORT=8000
+  variables:
+    required:
+      - SECRET_KEY
+      - DATABASE_URL

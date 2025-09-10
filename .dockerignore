@@ -1,0 +1,29 @@
+__pycache__
+*.pyc
+*.pyo
+*.pyd
+.Python
+env
+venv
+ENV
+.env
+.git
+.gitignore
+.pytest_cache
+.coverage
+htmlcov
+.DS_Store
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+# Local development
+*.db
+*.sqlite
+# Node modules (if any)
+node_modules/
+# Python
+*.egg-info/
+dist/
+build/
